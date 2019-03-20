@@ -2,31 +2,6 @@ public class Q5_LongestPalindromicSubstring {
 
     static class Solution {
         int maxLen, lo, hi, strlen;
-//
-//        public String longestPalindrome(String s) {
-//            if (s.equals("")) return "";
-//            maxLen = 1;
-//            lo = 0;
-//            hi = 0;
-//            strlen = s.length();
-//            for (int i = 0; i < strlen; i++) {
-//                extendPalindrome(s, i - 1, i + 1);
-//                extendPalindrome(s, i, i + 1);
-//            }
-//            return s.substring(lo, hi + 1);
-//        }
-//
-//        public void extendPalindrome(String s, int lo, int hi) {
-//            if (hi >= strlen || lo < 0) return;
-//            if (s.charAt(lo) != s.charAt(hi)) return;
-//            int currLen = hi - lo + 1;
-//            if (currLen > maxLen) {
-//                this.lo = lo;
-//                this.hi = hi;
-//                maxLen = currLen;
-//            }
-//            extendPalindrome(s, lo - 1, hi + 1);
-//        }
 
         public String longestPalindrome(String s) {
             if (s.equals("")) return "";
@@ -56,6 +31,31 @@ public class Q5_LongestPalindromicSubstring {
             }
             return nextIndex;
         }
+
+//        public String longestPalindrome(String s) {
+//            if (s.equals("")) return "";
+//            maxLen = 1;
+//            lo = 0;
+//            hi = 0;
+//            strlen = s.length();
+//            for (int i = 0; i < strlen; i++) {
+//                extendPalindrome(s, i - 1, i + 1);
+//                extendPalindrome(s, i, i + 1);
+//            }
+//            return s.substring(lo, hi + 1);
+//        }
+//
+//        public void extendPalindrome(String s, int lo, int hi) {
+//            if (hi >= strlen || lo < 0) return;
+//            if (s.charAt(lo) != s.charAt(hi)) return;
+//            int currLen = hi - lo + 1;
+//            if (currLen > maxLen) {
+//                this.lo = lo;
+//                this.hi = hi;
+//                maxLen = currLen;
+//            }
+//            extendPalindrome(s, lo - 1, hi + 1);
+//        }
 
     }
 
