@@ -3,23 +3,66 @@ import java.util.*;
 public class Q146_LRUCache {
     static class LRUCache {
         private int capacity;
-        private LinkedHashMap<Integer, Integer> map;
+        private int count;
+        private Map<Integer, Integer> map_value;
+        private Map<Integer, Integer> map_count;
+        private Queue<Integer> queue_lru;
 
         public LRUCache(int capacity) {
             this.capacity = capacity;
-            map = new LinkedHashMap<>(capacity, 0.75f, true){
-                protected boolean removeEldestEntry(Map.Entry eldest) {
-                    return size() > capacity;
-                }
-            };
+            this.count = 0;
+            this.map_value = new HashMap<>();
+            this.map_count = new HashMap<>();
+            this.queue_lru = new LinkedList<>();
+        }
+
+        public void showStatus() {
+            System.out.println("map_value: " + map_value.toString());
+            System.out.println("map_count: " + map_count.toString());
+            System.out.println("queue_lru: " + queue_lru.toString());
         }
 
         public int get(int key) {
-            return map.getOrDefault(key, -1);
+            System.out.println("Getting key " + key);
+
+            if (!map_value.containsKey(key)) {
+                showStatus();
+                return -1;
+            }
+            queue_lru.add(key);
+            map_count.computeIfPresent(key, (k, v) -> v + 1);
+            showStatus();
+            return map_value.get(key);
         }
 
         public void put(int key, int value) {
-            map.put(key, value);
+            System.out.println("Putting key " + key + ", value " + value);
+
+            if (this.get(key) != -1) {
+                map_value.put(key, value);
+                showStatus();
+                return;
+            }
+
+            while (count >= capacity) {
+                int key_front = queue_lru.poll();
+                if (map_count.get(key_front) == 1) {
+                    map_count.remove(key_front);
+                    map_value.remove(key_front);
+                    count--;
+                } else {
+                    map_count.merge(key_front, -1, Integer::sum);
+                }
+            }
+            queue_lru.add(key);
+            map_value.put(key, value);
+            map_count.compute(key, (k, v) -> {
+                if (v == null) {
+                    count += 1;
+                    return 1;
+                } else return v + 1;
+            });
+            showStatus();
         }
     }
 
@@ -43,7 +86,6 @@ public class Q146_LRUCache {
         System.out.println("Input:");
         System.out.println(inputs_func.toString());
         System.out.println(inputs_args.toString());
-        System.out.println("Expected Output: " + Arrays.toString(expectedOutput));
 
         Integer[] result = new Integer[expectedOutput.length];
         LRUCache lruCache = new LRUCache(inputs_args.get(0).get(0));
@@ -53,6 +95,8 @@ public class Q146_LRUCache {
             switch (input_func) {
                 case "get":
                     result[i] = lruCache.get(input_args.get(0));
+                    System.out.println("Actual: " + result[i]);
+                    System.out.println("Expected: " + expectedOutput[i]);
                     break;
                 case "put":
                     lruCache.put(input_args.get(0), input_args.get(1));
@@ -60,10 +104,12 @@ public class Q146_LRUCache {
                 default:
                     System.out.println("Wrong func name: " + input_func);
             }
+            System.out.println();
         }
 
+        System.out.println("Expected Output: " + Arrays.toString(expectedOutput));
         System.out.println("Actual Output: " + Arrays.toString(result));
-        assert result.equals(expectedOutput);
+        assert Arrays.equals(result, expectedOutput);
         System.out.println();
     }
 
