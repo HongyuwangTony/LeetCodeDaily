@@ -2,67 +2,24 @@ import java.util.*;
 
 public class Q146_LRUCache {
     static class LRUCache {
-        private int capacity;
-        private int count;
-        private Map<Integer, Integer> map_value;
-        private Map<Integer, Integer> map_count;
-        private Queue<Integer> queue_lru;
-
+        LinkedHashMap<Integer, Integer> map;
+        int capacity;
         public LRUCache(int capacity) {
             this.capacity = capacity;
-            this.count = 0;
-            this.map_value = new HashMap<>();
-            this.map_count = new HashMap<>();
-            this.queue_lru = new LinkedList<>();
-        }
-
-        public void showStatus() {
-            System.out.println("map_value: " + map_value.toString());
-            System.out.println("map_count: " + map_count.toString());
-            System.out.println("queue_lru: " + queue_lru.toString());
+            this.map = new LinkedHashMap<>(capacity, 0.75F, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<Integer, Integer> e) {
+                    return size() > capacity;
+                }
+            };
         }
 
         public int get(int key) {
-            System.out.println("Getting key " + key);
-
-            if (!map_value.containsKey(key)) {
-                showStatus();
-                return -1;
-            }
-            queue_lru.add(key);
-            map_count.computeIfPresent(key, (k, v) -> v + 1);
-            showStatus();
-            return map_value.get(key);
+            return this.map.getOrDefault(key, -1);
         }
 
         public void put(int key, int value) {
-            System.out.println("Putting key " + key + ", value " + value);
-
-            if (this.get(key) != -1) {
-                map_value.put(key, value);
-                showStatus();
-                return;
-            }
-
-            while (count >= capacity) {
-                int key_front = queue_lru.poll();
-                if (map_count.get(key_front) == 1) {
-                    map_count.remove(key_front);
-                    map_value.remove(key_front);
-                    count--;
-                } else {
-                    map_count.merge(key_front, -1, Integer::sum);
-                }
-            }
-            queue_lru.add(key);
-            map_value.put(key, value);
-            map_count.compute(key, (k, v) -> {
-                if (v == null) {
-                    count += 1;
-                    return 1;
-                } else return v + 1;
-            });
-            showStatus();
+            this.map.put(key, value);
         }
     }
 
