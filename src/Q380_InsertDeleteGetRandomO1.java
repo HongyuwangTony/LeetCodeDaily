@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
@@ -5,13 +6,13 @@ import java.util.Set;
 public class Q380_InsertDeleteGetRandomO1 {
     static class RandomizedSet {
         private HashMap<Integer, Integer> map_val;
-        private HashMap<Integer, Integer> map_sequence;
+        private ArrayList<Integer> arr;
         private int count;
 
         /** Initialize your data structure here. */
         public RandomizedSet() {
             map_val = new HashMap<>();
-            map_sequence = new HashMap<>();
+            arr = new ArrayList<>();
             count = 0;
         }
 
@@ -19,7 +20,7 @@ public class Q380_InsertDeleteGetRandomO1 {
         public boolean insert(int val) {
             if (map_val.containsKey(val)) return false;
             map_val.put(val, count);
-            map_sequence.put(count, val);
+            arr.add(val);
             count++;
             return true;
         }
@@ -29,10 +30,10 @@ public class Q380_InsertDeleteGetRandomO1 {
             if (!map_val.containsKey(val)) return false;
             int seq = map_val.remove(val);
             if (seq == count - 1) {
-                map_sequence.remove(seq);
+                arr.remove(seq);
             } else {
-                int val_tail = map_sequence.remove(count - 1);
-                map_sequence.put(seq, val_tail);
+                int val_tail = arr.remove(count - 1);
+                arr.set(seq, val_tail);
                 map_val.put(val_tail, seq);
             }
             count--;
@@ -41,7 +42,7 @@ public class Q380_InsertDeleteGetRandomO1 {
 
         /** Get a random element from the set. */
         public int getRandom() {
-            return map_sequence.get(new Random().nextInt(count));
+            return arr.get(new Random().nextInt(count));
         }
     }
 
