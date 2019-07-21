@@ -1,20 +1,8 @@
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Q981_TimeBasedKeyValueStore {
     class TimeMap {
-        class Value {
-            public Value(String value, int timestamp) {
-                this.value = value;
-                this.timestamp = timestamp;
-            }
-
-            String value;
-            int timestamp;
-        }
-
-        HashMap<String, TreeSet<Value>> map;
+        HashMap<String, TreeMap<Integer, String>> map;
 
         /** Initialize your data structure here. */
         public TimeMap() {
@@ -22,27 +10,17 @@ public class Q981_TimeBasedKeyValueStore {
         }
 
         public void set(String key, String value, int timestamp) {
-            if (map.containsKey(key)) {
-                map.get(key).add(new Value(value, timestamp));
-            } else {
-                TreeSet<Value> set = new TreeSet<>(new Comparator<Value>() {
-                    @Override
-                    public int compare(Value o1, Value o2) {
-                        return o1.timestamp - o2.timestamp;
-                    }
-                });
-                set.add(new Value(value, timestamp));
-                map.put(key, set);
+            if (!map.containsKey(key)) {
+                map.put(key, new TreeMap<>());
             }
+            map.get(key).put(timestamp, value);
         }
 
         public String get(String key, int timestamp) {
-            if (map.containsKey(key)) {
-                Value v = map.get(key).floor(new Value("", timestamp));
-                return v == null ? "" : v.value;
-            } else {
-                return "";
-            }
+            Map.Entry<Integer, String> entry;
+            if (!map.containsKey(key)) return "";
+            else if ((entry = map.get(key).floorEntry(timestamp)) == null) return "";
+            else return entry.getValue();
         }
     }
 
