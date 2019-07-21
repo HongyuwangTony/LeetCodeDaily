@@ -31,7 +31,7 @@ public class Q31_NextPermutation {
                     nextLarger++;
                 }
             }
-            
+
             if (transition == -1) {
                 reverse(nums, 0, len - 1);
             } else if (transition == len - 1) {
