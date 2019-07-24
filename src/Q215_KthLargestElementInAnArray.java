@@ -9,29 +9,26 @@ public class Q215_KthLargestElementInAnArray {
         }
 
         private int partition(int[] nums, int lo, int hi) {
-            int pivot = nums[hi];
-            int i = lo - 1;
-            for (int j = lo; j < hi; j++) {
-                if (nums[j] >= pivot) {
-                    i++;
-                    swap(nums, i, j);
-                }
+            int pivot = nums[lo];
+            int i = lo, j = hi + 1;
+            while (true) {
+                while(i < hi && nums[++i] > pivot);
+                while(j > lo && pivot > nums[--j]);
+                if (i >= j) break;
+                swap(nums, i, j);
             }
-            swap(nums, i + 1, hi);
-            return i + 1;
-        }
-
-        private void quickSort(int[] nums, int lo, int hi, int k) {
-            if (lo >= hi) return;
-            int pivot = partition(nums, lo, hi) - lo;
-//            System.out.println("lo: " + lo + ", hi: " + hi + ", k: " + k + " " + Arrays.toString(nums));
-            if (pivot == k - 1) return;
-            else if (pivot < k - 1) quickSort(nums, lo + pivot + 1, hi, k - pivot - 1);
-            else quickSort(nums, lo, lo + pivot - 1, k);
+            swap(nums, lo, j);
+            return j;
         }
 
         public int findKthLargest(int[] nums, int k) {
-            quickSort(nums, 0, nums.length - 1, k);
+            int lo = 0, hi = nums.length - 1;
+            while (lo < hi) {
+                int pivot = partition(nums, lo, hi);
+                if(pivot < k - 1) lo = pivot + 1;
+                else if (pivot > k - 1) hi = pivot - 1;
+                else break;
+            }
             return nums[k - 1];
         }
     }
