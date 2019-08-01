@@ -7,23 +7,22 @@ public class Q347_TopKFrequentElements {
             HashMap<Integer, Integer> map_freq = new HashMap<>();
             ArrayList<Integer>[] reverse_map = new ArrayList[len];
             for (int num : nums) {
-                int freq = map_freq.getOrDefault(num, 0) + 1;
-                map_freq.put(num, freq);
-                if (reverse_map[freq - 1] == null) reverse_map[freq - 1] = new ArrayList<>();
-                reverse_map[freq - 1].add(num);
+                map_freq.put(num, map_freq.getOrDefault(num, 0) + 1);
+            }
+            for (Map.Entry<Integer, Integer> entry : map_freq.entrySet()) {
+                int index = entry.getValue() - 1;
+                if (reverse_map[index] == null) reverse_map[index] = new ArrayList<>();
+                reverse_map[index].add(entry.getKey());
             }
             int size = 0;
             LinkedList<Integer> list = new LinkedList<>();
-            for (int i = len - 1; i >= 0; i--) {
+            for (int i = len - 1; i >= 0 && size < k; i--) {
                 ArrayList<Integer> nums_freq = reverse_map[i];
                 if (nums_freq == null) continue;
                 for (int num : nums_freq) {
-                    if (!map_freq.containsKey(num)) continue;
                     list.add(num);
-                    map_freq.remove(num);
                     if (++size == k) break;
                 }
-                if (size == k) break;
             }
             return list;
         }
