@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Q103_BinaryTreeZigzagLevelOrderTraversal {
@@ -12,8 +14,30 @@ public class Q103_BinaryTreeZigzagLevelOrderTraversal {
     }
 
     static class Solution {
-        public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        public void levelOrder(LinkedList<TreeNode> currLevel, List<List<Integer>> res, boolean toRight) {
+            List<Integer> currLevelVal = new ArrayList<>();
+            LinkedList<TreeNode> nextLevel = new LinkedList<>();
+            for (TreeNode node : currLevel) {
+                currLevelVal.add(node.val);
+                if (toRight) {
+                    if (node.left != null) nextLevel.addFirst(node.left);
+                    if (node.right != null) nextLevel.addFirst(node.right);
+                } else {
+                    if (node.right != null) nextLevel.addFirst(node.right);
+                    if (node.left != null) nextLevel.addFirst(node.left);
+                }
+            }
+            res.add(currLevelVal);
+            if (!nextLevel.isEmpty()) levelOrder(nextLevel, res, !toRight);
+        }
 
+        public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+            List<List<Integer>> res = new ArrayList<>();
+            if (root == null) return res;
+            LinkedList<TreeNode> currLevel = new LinkedList<>();
+            currLevel.add(root);
+            levelOrder(currLevel, res, true);
+            return res;
         }
     }
 
