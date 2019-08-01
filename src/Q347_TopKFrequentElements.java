@@ -3,27 +3,28 @@ import java.util.*;
 public class Q347_TopKFrequentElements {
     static class Solution {
         public List<Integer> topKFrequent(int[] nums, int k) {
+            int len = nums.length;
             HashMap<Integer, Integer> map_freq = new HashMap<>();
+            ArrayList<Integer>[] reverse_map = new ArrayList[len];
             for (int num : nums) {
-                Integer freq = map_freq.get(num);
-                int newFreq = freq == null ? 1 : freq + 1;
-                map_freq.put(num, newFreq);
+                int freq = map_freq.getOrDefault(num, 0) + 1;
+                map_freq.put(num, freq);
+                if (reverse_map[freq - 1] == null) reverse_map[freq - 1] = new ArrayList<>();
+                reverse_map[freq - 1].add(num);
             }
-            PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>(new Comparator<Map.Entry<Integer, Integer>>() {
-                @Override
-                public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
-                    return o1.getValue() == o2.getValue() ?
-                            o2.getKey().compareTo(o1.getKey()) : o1.getValue().compareTo(o2.getValue());
-                }
-            });
             int size = 0;
-            for (Map.Entry<Integer, Integer> entry : map_freq.entrySet()) {
-                pq.offer(entry);
-                if (size == k) pq.poll();
-                else size++;
-            }
             LinkedList<Integer> list = new LinkedList<>();
-            while(!pq.isEmpty()) list.addFirst(pq.poll().getKey());
+            for (int i = len - 1; i >= 0; i--) {
+                ArrayList<Integer> nums_freq = reverse_map[i];
+                if (nums_freq == null) continue;
+                for (int num : nums_freq) {
+                    if (!map_freq.containsKey(num)) continue;
+                    list.add(num);
+                    map_freq.remove(num);
+                    if (++size == k) break;
+                }
+                if (size == k) break;
+            }
             return list;
         }
     }
