@@ -2,35 +2,29 @@ import java.util.*;
 
 public class Q39_CombinationSum {
     static class Solution {
-        public List<List<Integer>> combinationSum(int[] candidates, int target) {
-            List<List<Integer>>[] dp = new List[target + 1];
-            for (int candidate : candidates) {
-                if (candidate > target) continue;
-                dp[candidate] = new ArrayList<>();
-                LinkedList<Integer> combination = new LinkedList<>();
-                combination.add(candidate);
-                dp[candidate].add(combination);
+        private List<List<Integer>> combinationSumHelper(int[] candidates, int target, int index_min) {
+            List<List<Integer>> res = new ArrayList<>();
+            if (target == 0) {
+                res.add(new ArrayList<>());
+                return res;
             }
-
-            for (int i = 1; i < target; i++) {
-                if (dp[i] == null) continue;
-                for (List<Integer> comb : dp[i]) {
-                    int tail = comb.get(comb.size() - 1);
-                    for (int candidate : candidates) {
-                        if (candidate < tail) continue;
-
-                        int sum = i + candidate;
-                        if (sum > target) continue;
-
-                        if (dp[sum] == null) dp[sum] = new ArrayList<>();
-                        LinkedList<Integer> newComb = new LinkedList<>(comb);
-                        newComb.add(candidate);
-                        dp[sum].add(newComb);
-                    }
+            int numCandidates = candidates.length;
+            for (int i = index_min; i < numCandidates; i++) {
+                int candidate = candidates[i];
+                if (target < candidate) break;
+                List<List<Integer>> combs = combinationSumHelper(candidates, target - candidate, i);
+                for (List<Integer> comb : combs) {
+                    List<Integer> newComb = new ArrayList<>(comb);
+                    newComb.add(candidate);
+                    res.add(newComb);
                 }
             }
+            return res;
+        }
 
-            return dp[target] == null ? new ArrayList<>() : dp[target];
+        public List<List<Integer>> combinationSum(int[] candidates, int target) {
+            Arrays.sort(candidates);
+            return combinationSumHelper(candidates, target, 0);
         }
     }
 
