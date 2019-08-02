@@ -2,29 +2,27 @@ import java.util.*;
 
 public class Q39_CombinationSum {
     static class Solution {
-        private List<List<Integer>> combinationSumHelper(int[] candidates, int target, int index_min) {
-            List<List<Integer>> res = new ArrayList<>();
+        private void combinationSumHelper(int[] candidates, int target, int index_min,
+                                          LinkedList<Integer> comb, List<List<Integer>> res) {
             if (target == 0) {
-                res.add(new ArrayList<>());
-                return res;
+                res.add(new LinkedList<>(comb));
+                return;
             }
             int numCandidates = candidates.length;
             for (int i = index_min; i < numCandidates; i++) {
                 int candidate = candidates[i];
                 if (target < candidate) break;
-                List<List<Integer>> combs = combinationSumHelper(candidates, target - candidate, i);
-                for (List<Integer> comb : combs) {
-                    List<Integer> newComb = new ArrayList<>(comb);
-                    newComb.add(candidate);
-                    res.add(newComb);
-                }
+                comb.add(candidate);
+                combinationSumHelper(candidates, target - candidate, i, comb, res);
+                comb.removeLast();
             }
-            return res;
         }
 
         public List<List<Integer>> combinationSum(int[] candidates, int target) {
             Arrays.sort(candidates);
-            return combinationSumHelper(candidates, target, 0);
+            List<List<Integer>> res = new LinkedList<>();
+            combinationSumHelper(candidates, target,0, new LinkedList<>(), res);
+            return res;
         }
     }
 
