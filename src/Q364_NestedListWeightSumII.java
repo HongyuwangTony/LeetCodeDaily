@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Q364_NestedListWeightSumII {
@@ -26,8 +27,19 @@ public class Q364_NestedListWeightSumII {
     }
 
     static class Solution {
+        // Referring to https://leetcode.com/problems/nested-list-weight-sum-ii/discuss/83641/No-depth-variable-no-multiplication
         public int depthSumInverse(List<NestedInteger> nestedList) {
-
+            int prev = 0, curr = 0;
+            while (!nestedList.isEmpty()) {
+                List<NestedInteger> nextLevel = new ArrayList<>();
+                for (NestedInteger ni : nestedList) {
+                    if (ni.isInteger()) prev += ni.getInteger();
+                    else nextLevel.addAll(ni.getList());
+                }
+                curr += prev;
+                nestedList = nextLevel;
+            }
+            return curr;
         }
     }
 }
