@@ -1,6 +1,12 @@
+# Ignore Intellij IDE config files
 out/*
 .idea/*
 *.iml
+
+# Ignore Mac config files
 .DS_Store
 src/.DS_Store
+
+# Ignore some local files
 src/Main.java
+src/Others/*
